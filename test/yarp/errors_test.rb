@@ -1166,8 +1166,30 @@ module YARP
 
     def test_invalid_global_variable_write
       assert_errors expression("$',"), "$',", [
-        ["Immutable variable as a write target", 0..2]
+        ["Immutable variable as a write target", 0..2],
+        ["Unexpected write target", 0..3]
       ]
+    end
+
+    def test_invalid_multi_target
+      error_messages = ["Unexpected write target"]
+      immutable = "Immutable variable as a write target"
+
+      assert_error_messages "foo,", error_messages
+      assert_error_messages "foo = 1; foo,", error_messages
+      assert_error_messages "foo.bar,", error_messages
+      assert_error_messages "*foo,", error_messages
+      assert_error_messages "@foo,", error_messages
+      assert_error_messages "@@foo,", error_messages
+      assert_error_messages "$foo,", error_messages
+      assert_error_messages "$1,", [immutable, *error_messages]
+      assert_error_messages "$+,", [immutable, *error_messages]
+      assert_error_messages "Foo,", error_messages
+      assert_error_messages "::Foo,", error_messages
+      assert_error_messages "Foo::Foo,", error_messages
+      assert_error_messages "Foo::foo,", error_messages
+      assert_error_messages "foo[foo],", error_messages
+      assert_error_messages "(foo, bar)", error_messages
     end
 
     def test_call_with_block_and_write
