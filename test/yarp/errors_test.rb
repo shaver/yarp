@@ -923,7 +923,7 @@ module YARP
       )
 
       assert_errors expected, "case :a\nelse\nend", [
-        ["Unexpected `else` in `case` statement; a `when` clause must precede `else`", 8..12]
+        ["Expected a `when` or `in` clause after `case`", 0..4]
       ]
     end
 
